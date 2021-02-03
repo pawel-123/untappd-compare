@@ -3,6 +3,10 @@ const app = express();
 const path = require('path');
 require('dotenv').config();
 const compareBeers = require('./compareBeers');
+// app.use(express.json())
+app.use(express.urlencoded({
+    extended: true
+}))
 
 const options = {
     root: path.join(__dirname, '/')
@@ -23,6 +27,11 @@ app.get('/results', async (request, response) => {
     beerHtml += '</ul>';
     response.send(beerHtml);
 });
+
+app.post('/results', (request, response) => {
+    console.log(request.body)
+    response.status(200).send('Success')
+})
 
 const PORT = 3002;
 app.listen(PORT, () => {
