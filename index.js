@@ -13,8 +13,7 @@ app.get('/', (_, response) => {
 });
 
 app.get('/results', async (request, response) => {
-    const user1 = request.query.user1;
-    const user2 = request.query.user2;
+    const { user1, user2 } = request.query
     const commonBeers = await compareBeers(user1, user2);
 
     const greeting = `<p>${user1} and ${user2} have ${commonBeers.length} beers in common:</p><ul>`;
