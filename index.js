@@ -25,17 +25,26 @@ app.get('/', (_, response) => {
 
 app.get('/api/comparison', async (request, response) => {
     const { user1, user2 } = request.query
-    const commonBeers = await compareBeers(user1, user2);
 
-    const comparison = new Comparison({
-        untappdUsers: [user1, user2],
-        commonBeers: commonBeers,
-        date: new Date()
-    })
+    const existingComparison = await Comparison.findOne({ untappdUsers: [user1, user2] })
 
-    await comparison.save()
+    let commonBeers;
 
-    console.log('saved to database')
+    if (!existingComparison) {
+        commonBeers = await compareBeers(user1, user2);
+
+        const comparison = new Comparison({
+            untappdUsers: [user1, user2],
+            commonBeers: commonBeers,
+            date: new Date()
+        })
+
+        await comparison.save()
+        console.log('fetched commonBeers from Untappd and saved to database')
+    } else {
+        commonBeers = existingComparison.commonBeers
+        console.log('fetched commonBeers from database')
+    }
 
     const greeting = `<p>${user1} and ${user2} have ${commonBeers.length} beers in common:</p><ul>`;
     const beers = commonBeers.map(beer => `<li>${beer.beer_name}</li>`);
@@ -47,6 +56,7 @@ app.get('/api/comparison', async (request, response) => {
 
 app.get('/api/comparisons', async (request, response) => {
     const comparisons = await Comparison.find({})
+    console.log(comparisons)
     response.json(comparisons)
 })
 
