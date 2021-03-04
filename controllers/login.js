@@ -1,7 +1,16 @@
+const path = require('path');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const User = require('../models/user')
+
+const options = {
+    root: path.join(__dirname, '../'),
+};
+
+loginRouter.get('/', (request, response) => {
+    response.sendFile('/login.html', options)
+})
 
 loginRouter.post('/', async (request, response) => {
     const body = request.body

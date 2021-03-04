@@ -21,6 +21,7 @@ mongoose.connect(
 })
 
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (_, response) => {
     response.sendFile('/index.html', options);
