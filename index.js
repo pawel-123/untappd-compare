@@ -4,6 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose')
 require('dotenv').config();
 const comparisonsRouter = require('./controllers/comparisons')
+const usersRouter = require('./controllers/users')
 
 const options = {
     root: path.join(__dirname, '/'),
@@ -18,11 +19,14 @@ mongoose.connect(
     console.log('connected to DB')
 })
 
+app.use(express.json())
+
 app.get('/', (_, response) => {
     response.sendFile('/index.html', options);
 });
 
 app.use('/api/comparisons', comparisonsRouter)
+app.use('/api/users', usersRouter)
 
 const PORT = 3002;
 
