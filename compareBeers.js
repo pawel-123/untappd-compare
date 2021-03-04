@@ -32,7 +32,6 @@ const compareBeers = async (user1, user2) => {
     console.log(`${user1} (average rating: ${averageRatings['user1_average']})`)
     console.log(`${user2} (average rating: ${averageRatings['user2_average']})`)
     console.log(`users have ${commonBeers.length} beers in common`);
-    console.log(commonBeers);
 
     return commonBeers;
 }

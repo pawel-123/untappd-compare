@@ -12,7 +12,7 @@ const userBeerFetch = async (username, limit = 50) => {
     const queryUrl = generateQueryUrl(username, limit);
     const response = await fetch(queryUrl);
     const data = await response.json();
-
+    console.log(data.meta)
     const totalCount = data.response.total_count;
     console.log(`total number of results for ${username}: ${totalCount}`);
     const numberOfQueries = Math.ceil(totalCount / limit);
@@ -26,7 +26,7 @@ const userBeerFetch = async (username, limit = 50) => {
         return newUrl;
     })
 
-    console.log('array of fetchUrls for ${username}:', fetchUrls);
+    console.log(`array of fetchUrls for ${username}:`, fetchUrls);
 
     // convert fetchUrls to requests
     const requests = fetchUrls.map(url => fetch(url));

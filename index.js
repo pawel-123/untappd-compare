@@ -28,10 +28,7 @@ app.get('/api/comparison', async (request, response) => {
 
     const findComparison = (userA, userB) => Comparison.findOne({ untappdUsers: [userA, userB] })
 
-    const existingComparison =
-        await findComparison(user1, user2)
-        || await findComparison(user2, user1)
-        || null
+    const existingComparison = await findComparison(user1, user2) || await findComparison(user2, user1)
 
     let commonBeers;
 
