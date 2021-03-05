@@ -8,7 +8,19 @@ const options = {
 };
 
 usersRouter.get('/', async (request, response) => {
+    const tokenCookie = request.cookies.token
+    let token = null
+
+    if (tokenCookie && tokenCookie.toLowerCase().startsWith('bearer ')) {
+        token = tokenCookie.substring(7)
+    }
+
+    if (!token) {
+        response.status(401).json({ error: 'token missing' })
+    }
+
     const users = await User.find({})
+
     response.json(users)
 })
 

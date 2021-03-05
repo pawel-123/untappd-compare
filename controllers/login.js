@@ -36,7 +36,9 @@ loginRouter.post('/', async (request, response) => {
 
     response
         .status(200)
-        .send({ token, username: user.username, id: user.id })
+        .cookie('token', `Bearer ${token}`)
+        .redirect('../..')
+    // .send({ token, username: user.username, id: user.id })
 })
 
 module.exports = loginRouter
