@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const path = require('path');
+const jwt = require('jsonwebtoken')
+const helper = require('../utils/helper')
 const User = require('../models/user')
 
 const options = {
@@ -8,15 +10,11 @@ const options = {
 };
 
 usersRouter.get('/', async (request, response) => {
-    const tokenCookie = request.cookies.token
-    let token = null
+    const token = helper.getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
 
-    if (tokenCookie && tokenCookie.toLowerCase().startsWith('bearer ')) {
-        token = tokenCookie.substring(7)
-    }
-
-    if (!token) {
-        response.status(401).json({ error: 'token missing' })
+    if (!token || !decodedToken.id) {
+        response.status(401).json({ error: 'token missing or invalid' })
     }
 
     const users = await User.find({})

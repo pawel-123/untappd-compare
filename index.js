@@ -26,7 +26,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (request, response) => {
-    console.log('cookies: ', request.cookies)
     response.sendFile('/index.html', options);
 });
 

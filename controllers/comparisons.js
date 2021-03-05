@@ -1,8 +1,16 @@
 const comparisonsRouter = require('express').Router()
 const Comparison = require('../models/comparison')
+const helper = require('../utils/helper')
+const jwt = require('jsonwebtoken')
 
 comparisonsRouter.get('/', async (request, response) => {
     const { user1, user2 } = request.query
+    const token = helper.getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!token || !decodedToken) {
+        response.status(401).json({ error: 'token missing or invalid' })
+    }
 
     const findComparison = (userA, userB) => Comparison.findOne({ untappdUsers: [userA, userB] })
 
