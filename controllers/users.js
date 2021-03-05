@@ -1,8 +1,22 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
+const path = require('path');
 const User = require('../models/user')
 
-usersRouter.post('/', async (request, response) => {
+const options = {
+    root: path.join(__dirname, '../'),
+};
+
+usersRouter.get('/', async (request, response) => {
+    const users = await User.find({})
+    response.json(users)
+})
+
+usersRouter.get('/register', async (request, response) => {
+    response.sendFile('/register.html', options)
+})
+
+usersRouter.post('/register', async (request, response) => {
     const body = request.body
 
     const passwordHash = await bcrypt.hash(body.password, 10)
