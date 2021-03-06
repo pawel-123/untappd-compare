@@ -9,9 +9,9 @@
 
 <body>
     <p>Login or register to compare beers</p>
-    <a href="/api/login">Login</a>
-    <a href="/api/users/register">Register</a>
-    <a href="/api/logout">Log out</a>
+    <a id="login" href="/api/login">Login</a>
+    <a id="register" href="/api/users/register">Register</a>
+    <a id="logout" href="/api/logout">Log out</a>
     <h2>Input two valid Untappd usernames</h2>
     <p>If you don't know any, you can use 'pawcio' and 'birr0nauta'</p>
     <form action="/api/comparisons">
@@ -23,6 +23,16 @@
         <br>
         <button type="submit">Submit</button>
     </form>
+    <script>
+        const cookies = document.cookie.split(';')
+        const token = cookies.find(cookie => cookie.includes("token"))
+        if (token) {
+            login.hidden = true
+            register.hidden = true
+        } else {
+            logout.hidden = true
+        }
+    </script>
 </body>
 
 </html>
