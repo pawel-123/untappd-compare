@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 const comparisonsRouter = require('./controllers/comparisons')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
+const middleware = require('./utils/middleware')
 
 const options = {
     root: path.join(__dirname, '/'),
@@ -35,6 +36,9 @@ app.use('/api/login', loginRouter)
 app.get('/api/logout', (request, response) => {
     response.status(200).clearCookie('token').redirect('../..')
 })
+
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
 const PORT = 3002;
 
