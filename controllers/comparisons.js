@@ -1,8 +1,10 @@
 const comparisonsRouter = require('express').Router()
 const Comparison = require('../models/comparison')
+const User = require('../models/user')
 const helper = require('../utils/helper')
 const jwt = require('jsonwebtoken')
 
+// should this be a POST request since it can also save comparison to DB?
 comparisonsRouter.get('/', async (request, response) => {
     const { user1, user2 } = request.query
     const token = helper.getTokenFrom(request)
@@ -41,6 +43,35 @@ comparisonsRouter.get('/', async (request, response) => {
 
     response.send(html);
 });
+
+comparisonsRouter.get('/save/:id', async (request, response) => {
+    const comparison = await Comparison.findById(request.params.id)
+
+    const token = helper.getTokenFrom(request)
+    console.log('token: ', token)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!token || !decodedToken.id) {
+        response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    console.log('decodedToken: ', decodedToken)
+
+    const userId = decodedToken.id
+    console.log('userId: ', userId)
+
+    const user = await User.findById(userId)
+
+    console.log('user: ', user)
+
+    comparison.users = comparison.users.concat(user._id)
+    user.savedComparisons = user.savedComparisons.concat(comparison._id)
+
+    const savedComparison = await comparison.save()
+    await user.save()
+
+    response.status(201).json(savedComparison)
+})
 
 comparisonsRouter.get('/all', async (request, response) => {
     const comparisons = await Comparison.find({})
