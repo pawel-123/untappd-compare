@@ -8,8 +8,8 @@ const compareBeers = require('../compareBeers')
 comparisonsRouter.get('/', async (request, response) => {
     const comparisons = await Comparison.find({})
 
-    const table = `<h1>There are ${comparisons.length} comparisons in the database</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th></tr></thead><tbody>`
-    const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td></tr>`)
+    const table = `<h1>There are ${comparisons.length} comparisons in the database</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th><th>See comparison</th></tr></thead><tbody>`
+    const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td><td><a href="/api/comparisons/${comp._id}">Click here</a></td></tr>`)
     const html = `${table}${beerRows.join('')}</tbody></table>`
 
     response.send(html)
@@ -48,35 +48,45 @@ comparisonsRouter.post('/', async (request, response) => {
 });
 
 comparisonsRouter.get('/:comp_id', async (request, response) => {
-    const comparison = await Comparison.findById(request.params.comp_id)
-
-    const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p><ul>`;
-    const beers = comparison.commonBeers.map(beer => `<li>${beer.beer_name}</li>`);
-
-    const html = `${greeting}<ul>${beers.join('')}</ul>`;
-
-    response.send(html);
-})
-
-comparisonsRouter.get('/:comp_id/save', async (request, response) => {
-    const comparison = await Comparison.findById(request.params.comp_id)
-
     const token = helper.getTokenFrom(request)
-    console.log('token: ', token)
     const decodedToken = jwt.verify(token, process.env.SECRET)
 
     if (!token || !decodedToken.id) {
         response.status(401).json({ error: 'token missing or invalid' })
     }
 
-    console.log('decodedToken: ', decodedToken)
+    const comparison = await Comparison.findById(request.params.comp_id)
 
     const userId = decodedToken.id
-    console.log('userId: ', userId)
-
     const user = await User.findById(userId)
 
-    console.log('user: ', user)
+    const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p><ul>`;
+    const beers = comparison.commonBeers.map(beer => `<li>${beer.beer_name}</li>`);
+    console.log('comparison.users: ', comparison.users)
+    console.log('userId: ', userId)
+    console.log('user._id: ', user._id)
+    console.log('true or false? ', comparison.users.includes(user._id))
+    const saveComparison = (comparison.users.includes(user._id))
+        ? `<p>You already saved this comparison</p>`
+        : `<form method="post" action="/api/comparisons/${comparison._id}"><button name="save">Save comparison</button></form>`
+
+    const html = `${greeting}<ul>${beers.join('')}</ul>${saveComparison}`;
+
+    response.send(html);
+})
+
+comparisonsRouter.post('/:comp_id', async (request, response) => {
+    const comparison = await Comparison.findById(request.params.comp_id)
+
+    const token = helper.getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!token || !decodedToken.id) {
+        response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const userId = decodedToken.id
+    const user = await User.findById(userId)
 
     if (!comparison.users.includes(user._id)) {
         comparison.users = comparison.users.concat(user._id)
@@ -88,7 +98,7 @@ comparisonsRouter.get('/:comp_id/save', async (request, response) => {
         await user.save()
     }
 
-    response.status(201).json(comparison)
+    response.redirect(`/api/comparisons/${request.params.comp_id}`)
 })
 
 comparisonsRouter.get('/users/:user_id', async (request, response) => {
