@@ -3,6 +3,7 @@ const Comparison = require('../models/comparison')
 const User = require('../models/user')
 const helper = require('../utils/helper')
 const jwt = require('jsonwebtoken')
+const compareBeers = require('../compareBeers')
 
 // should this be a POST request since it can also save comparison to DB?
 comparisonsRouter.get('/', async (request, response) => {
@@ -64,13 +65,17 @@ comparisonsRouter.get('/save/:id', async (request, response) => {
 
     console.log('user: ', user)
 
-    comparison.users = comparison.users.concat(user._id)
-    user.savedComparisons = user.savedComparisons.concat(comparison._id)
+    if (!comparison.users.includes(user._id)) {
+        comparison.users = comparison.users.concat(user._id)
+        await comparison.save()
+    }
 
-    const savedComparison = await comparison.save()
-    await user.save()
+    if (!user.savedComparisons.includes(comparison._id)) {
+        user.savedComparisons = user.savedComparisons.concat(comparison._id)
+        await user.save()
+    }
 
-    response.status(201).json(savedComparison)
+    response.status(201).json(comparison)
 })
 
 comparisonsRouter.get('/all', async (request, response) => {
