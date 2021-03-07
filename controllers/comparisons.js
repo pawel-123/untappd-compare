@@ -91,4 +91,11 @@ comparisonsRouter.get('/:comp_id/save', async (request, response) => {
     response.status(201).json(comparison)
 })
 
+comparisonsRouter.get('/users/:user_id', async (request, response) => {
+    const user = await User.findById(request.params.user_id)
+    const comparisons = await Comparison.find({ users: { $in: [user._id] } })
+
+    response.json(comparisons)
+})
+
 module.exports = comparisonsRouter
