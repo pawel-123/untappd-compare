@@ -5,9 +5,18 @@ const helper = require('../utils/helper')
 const jwt = require('jsonwebtoken')
 const compareBeers = require('../compareBeers')
 
-// should this be a POST request since it can also save comparison to DB?
 comparisonsRouter.get('/', async (request, response) => {
-    const { user1, user2 } = request.query
+    const comparisons = await Comparison.find({})
+
+    const table = `<h1>There are ${comparisons.length} comparisons in the database</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th></tr></thead><tbody>`
+    const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td></tr>`)
+    const html = `${table}${beerRows.join('')}</tbody></table>`
+
+    response.send(html)
+})
+
+comparisonsRouter.post('/', async (request, response) => {
+    const { user1, user2 } = request.body
     const token = helper.getTokenFrom(request)
     const decodedToken = jwt.verify(token, process.env.SECRET)
 
@@ -17,12 +26,10 @@ comparisonsRouter.get('/', async (request, response) => {
 
     const findComparison = (userA, userB) => Comparison.findOne({ untappdUsers: [userA, userB] })
 
-    const existingComparison = await findComparison(user1, user2) || await findComparison(user2, user1)
+    let requestedComparison = await findComparison(user1, user2) || await findComparison(user2, user1)
 
-    let commonBeers;
-
-    if (!existingComparison) {
-        commonBeers = await compareBeers(user1, user2);
+    if (!requestedComparison) {
+        const commonBeers = await compareBeers(user1, user2);
 
         const comparison = new Comparison({
             untappdUsers: [user1, user2],
@@ -30,23 +37,29 @@ comparisonsRouter.get('/', async (request, response) => {
             date: new Date()
         })
 
-        await comparison.save()
+        requestedComparison = await comparison.save()
         console.log('fetched commonBeers from Untappd and saved to database')
     } else {
-        commonBeers = existingComparison.commonBeers
         console.log('fetched commonBeers from database')
     }
 
-    const greeting = `<p>${user1} and ${user2} have ${commonBeers.length} beers in common:</p><ul>`;
-    const beers = commonBeers.map(beer => `<li>${beer.beer_name}</li>`);
+    response.redirect(`/api/comparisons/${requestedComparison._id}`)
+
+});
+
+comparisonsRouter.get('/:comp_id', async (request, response) => {
+    const comparison = await Comparison.findById(request.params.comp_id)
+
+    const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p><ul>`;
+    const beers = comparison.commonBeers.map(beer => `<li>${beer.beer_name}</li>`);
 
     const html = `${greeting}<ul>${beers.join('')}</ul>`;
 
     response.send(html);
-});
+})
 
-comparisonsRouter.get('/save/:id', async (request, response) => {
-    const comparison = await Comparison.findById(request.params.id)
+comparisonsRouter.get('/:comp_id/save', async (request, response) => {
+    const comparison = await Comparison.findById(request.params.comp_id)
 
     const token = helper.getTokenFrom(request)
     console.log('token: ', token)
@@ -76,16 +89,6 @@ comparisonsRouter.get('/save/:id', async (request, response) => {
     }
 
     response.status(201).json(comparison)
-})
-
-comparisonsRouter.get('/all', async (request, response) => {
-    const comparisons = await Comparison.find({})
-
-    const table = `<h1>There are ${comparisons.length} comparisons in the database</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th></tr></thead><tbody>`
-    const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td></tr>`)
-    const html = `${table}${beerRows.join('')}</tbody></table>`
-
-    response.send(html)
 })
 
 module.exports = comparisonsRouter
