@@ -9,6 +9,7 @@ const options = {
     root: path.join(__dirname, '../'),
 };
 
+// View all users, requires authorization
 usersRouter.get('/', async (request, response) => {
     const token = helper.getTokenFrom(request)
     const decodedToken = jwt.verify(token, process.env.SECRET)
@@ -22,10 +23,12 @@ usersRouter.get('/', async (request, response) => {
     response.json(users)
 })
 
+// Form to register a new user
 usersRouter.get('/register', async (request, response) => {
     response.sendFile('/register.html', options)
 })
 
+// Route to register a new user
 usersRouter.post('/register', async (request, response) => {
     const body = request.body
 

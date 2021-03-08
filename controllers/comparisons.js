@@ -5,6 +5,7 @@ const helper = require('../utils/helper')
 const jwt = require('jsonwebtoken')
 const compareBeers = require('../compareBeers')
 
+// View all comparisons
 comparisonsRouter.get('/', async (request, response) => {
     const comparisons = await Comparison.find({})
 
@@ -15,6 +16,7 @@ comparisonsRouter.get('/', async (request, response) => {
     response.send(html)
 })
 
+// Request a comparison, requires authorization, redirects to a comparison page
 comparisonsRouter.post('/', async (request, response) => {
     const { user1, user2 } = request.body
     const token = helper.getTokenFrom(request)
@@ -28,6 +30,7 @@ comparisonsRouter.post('/', async (request, response) => {
 
     let requestedComparison = await findComparison(user1, user2) || await findComparison(user2, user1)
 
+    // If there is no such comparison, it will fetch data from API, otherwise from DB
     if (!requestedComparison) {
         const commonBeers = await compareBeers(user1, user2);
 
@@ -47,6 +50,7 @@ comparisonsRouter.post('/', async (request, response) => {
 
 });
 
+// View a specific comparison, requires authorization
 comparisonsRouter.get('/:comp_id', async (request, response) => {
     const token = helper.getTokenFrom(request)
     const decodedToken = jwt.verify(token, process.env.SECRET)
@@ -62,10 +66,6 @@ comparisonsRouter.get('/:comp_id', async (request, response) => {
 
     const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p><ul>`;
     const beers = comparison.commonBeers.map(beer => `<li>${beer.beer_name}</li>`);
-    console.log('comparison.users: ', comparison.users)
-    console.log('userId: ', userId)
-    console.log('user._id: ', user._id)
-    console.log('true or false? ', comparison.users.includes(user._id))
     const saveComparison = (comparison.users.includes(user._id))
         ? `<p>You already saved this comparison</p>`
         : `<form method="post" action="/api/comparisons/${comparison._id}"><button name="save">Save comparison</button></form>`
@@ -75,6 +75,7 @@ comparisonsRouter.get('/:comp_id', async (request, response) => {
     response.send(html);
 })
 
+// Save a comparison as a user, requires authorization
 comparisonsRouter.post('/:comp_id', async (request, response) => {
     const comparison = await Comparison.findById(request.params.comp_id)
 
@@ -101,6 +102,7 @@ comparisonsRouter.post('/:comp_id', async (request, response) => {
     response.redirect(`/api/comparisons/${request.params.comp_id}`)
 })
 
+// View comparisons saved by a user
 comparisonsRouter.get('/users/:user_id', async (request, response) => {
     const user = await User.findById(request.params.user_id)
     const comparisons = await Comparison.find({ users: { $in: [user._id] } })

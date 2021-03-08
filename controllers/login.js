@@ -8,10 +8,12 @@ const options = {
     root: path.join(__dirname, '../'),
 };
 
+// Page with login form
 loginRouter.get('/', (request, response) => {
     response.sendFile('/login.html', options)
 })
 
+// Login and obtain a token (stored in a cookie)
 loginRouter.post('/', async (request, response) => {
     const body = request.body
 
@@ -38,7 +40,6 @@ loginRouter.post('/', async (request, response) => {
         .status(200)
         .cookie('token', `Bearer ${token}`)
         .redirect('../..')
-    // .send({ token, username: user.username, id: user.id })
 })
 
 module.exports = loginRouter

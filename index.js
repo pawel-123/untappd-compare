@@ -26,6 +26,7 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Home page with login/register/log out and a form to request a comparison
 app.get('/', (request, response) => {
     response.sendFile('/index.html', options);
 });
