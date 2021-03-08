@@ -6,6 +6,14 @@ const compareBeers = async (user1, user2) => {
     const user1Beers = await userBeerFetch(user1);
     const user2Beers = await userBeerFetch(user2);
 
+    if (Object.keys(user1Beers).length === 0 && Object.keys(user2Beers).length === 0) {
+        throw new Error(`Invalid username or no check-ins for: ${user1} & ${user2}`);
+    } else if (Object.keys(user1Beers).length === 0) {
+        throw new Error(`Invalid username or no check-ins for: ${user1}`);
+    } else if (Object.keys(user2Beers).length === 0) {
+        throw new Error(`Invalid username or no check-ins for: ${user2}`);
+    }
+
     // find common beers between user1 and user2
     // and create commonBeers - an array of objects
     const commonBeers = await Object.keys(user1Beers).reduce((arr, beer) => {

@@ -14,6 +14,7 @@ const userBeerFetch = async (username, limit = 50) => {
     const data = await response.json();
 
     const totalCount = data.response.total_count;
+
     console.log(`total number of results for ${username}: ${totalCount}`);
     const numberOfQueries = Math.ceil(totalCount / limit);
 

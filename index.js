@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors');
 const app = express();
 const path = require('path');
 const mongoose = require('mongoose');

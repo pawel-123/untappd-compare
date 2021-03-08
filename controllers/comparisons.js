@@ -61,6 +61,10 @@ comparisonsRouter.get('/:comp_id', async (request, response) => {
 
     const comparison = await Comparison.findById(request.params.comp_id);
 
+    if (!comparison) {
+        response.status(404).json({ error: 'comparison not found' });
+    }
+
     const userId = decodedToken.id;
     const user = await User.findById(userId);
 

@@ -32,6 +32,10 @@ usersRouter.get('/register', async (request, response) => {
 usersRouter.post('/register', async (request, response) => {
     const body = request.body;
 
+    if (body.password.length < 6) {
+        response.status(403).json({ error: 'password too short' });
+    }
+
     const passwordHash = await bcrypt.hash(body.password, 10);
 
     const user = new User({
