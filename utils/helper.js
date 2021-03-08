@@ -1,9 +1,9 @@
 const getTokenFrom = request => {
-    const token = request.cookies.token
+    const token = request.cookies.token;
     if (token && token.toLowerCase().startsWith('bearer ')) {
-        return token.substring(7)
+        return token.substring(7);
     }
-    return null
-}
+    return null;
+};
 
-module.exports = { getTokenFrom }
+module.exports = { getTokenFrom };

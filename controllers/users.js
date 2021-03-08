@@ -1,9 +1,9 @@
-const bcrypt = require('bcrypt')
-const usersRouter = require('express').Router()
+const bcrypt = require('bcrypt');
+const usersRouter = require('express').Router();
 const path = require('path');
-const jwt = require('jsonwebtoken')
-const helper = require('../utils/helper')
-const User = require('../models/user')
+const jwt = require('jsonwebtoken');
+const helper = require('../utils/helper');
+const User = require('../models/user');
 
 const options = {
     root: path.join(__dirname, '../'),
@@ -11,37 +11,37 @@ const options = {
 
 // View all users, requires authorization
 usersRouter.get('/', async (request, response) => {
-    const token = helper.getTokenFrom(request)
-    const decodedToken = jwt.verify(token, process.env.SECRET)
+    const token = helper.getTokenFrom(request);
+    const decodedToken = jwt.verify(token, process.env.SECRET);
 
     if (!token || !decodedToken.id) {
-        response.status(401).json({ error: 'token missing or invalid' })
+        response.status(401).json({ error: 'token missing or invalid' });
     }
 
-    const users = await User.find({})
+    const users = await User.find({});
 
-    response.json(users)
-})
+    response.json(users);
+});
 
 // Form to register a new user
 usersRouter.get('/register', async (request, response) => {
-    response.sendFile('/register.html', options)
-})
+    response.sendFile('/register.html', options);
+});
 
 // Route to register a new user
 usersRouter.post('/register', async (request, response) => {
-    const body = request.body
+    const body = request.body;
 
-    const passwordHash = await bcrypt.hash(body.password, 10)
+    const passwordHash = await bcrypt.hash(body.password, 10);
 
     const user = new User({
         username: body.username,
         passwordHash
-    })
+    });
 
-    const savedUser = await user.save()
+    const savedUser = await user.save();
 
-    response.json(savedUser)
-})
+    response.json(savedUser);
+});
 
-module.exports = usersRouter
+module.exports = usersRouter;

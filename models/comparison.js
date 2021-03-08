@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const comparisonSchema = new mongoose.Schema({
     untappdUsers: {
@@ -14,14 +14,14 @@ const comparisonSchema = new mongoose.Schema({
             ref: 'User'
         }
     ]
-})
+});
 
 comparisonSchema.set('toJSON', {
     transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
+        returnedObject.id = returnedObject._id.toString();
+        delete returnedObject._id;
+        delete returnedObject.__v;
     }
-})
+});
 
-module.exports = mongoose.model('Comparison', comparisonSchema)
+module.exports = mongoose.model('Comparison', comparisonSchema);

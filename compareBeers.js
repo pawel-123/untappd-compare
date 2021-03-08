@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const userBeerFetch = require('./api');
 
 const compareBeers = async (user1, user2) => {
@@ -16,7 +15,7 @@ const compareBeers = async (user1, user2) => {
                 beer_name: user1Beers[beer]['beer_name'],
                 user1_rating: user1Beers[beer]['beer_rating'],
                 user2_rating: user2Beers[beer]['beer_rating']
-            }
+            };
             arr.push(commonBeer);
         }
         return arr;
@@ -29,11 +28,11 @@ const compareBeers = async (user1, user2) => {
         return obj;
     }, { 'user1_average': 0, 'user2_average': 0 });
 
-    console.log(`${user1} (average rating: ${averageRatings['user1_average']})`)
-    console.log(`${user2} (average rating: ${averageRatings['user2_average']})`)
+    console.log(`${user1} (average rating: ${averageRatings['user1_average']})`);
+    console.log(`${user2} (average rating: ${averageRatings['user2_average']})`);
     console.log(`users have ${commonBeers.length} beers in common`);
 
     return commonBeers;
-}
+};
 
 module.exports = compareBeers;
