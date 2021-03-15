@@ -38,7 +38,7 @@ loginRouter.post('/', async (request, response) => {
 
     response
         .status(200)
-        .cookie('token', `Bearer ${token}`)
+        .cookie('token', `Bearer ${token}`, { httpOnly: true })
         .redirect('../..');
 });
 
