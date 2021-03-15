@@ -36,7 +36,7 @@ app.use('/api/comparisons', comparisonsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.get('/api/logout', (request, response) => {
-    response.status(200).clearCookie('token').redirect('../..');
+    response.status(200).clearCookie('token').clearCookie('loggedIn').redirect('../..');
 });
 
 app.use(middleware.unknownEndpoint);

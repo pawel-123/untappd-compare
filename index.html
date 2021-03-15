@@ -26,8 +26,8 @@
     </form>
     <script>
         const cookies = document.cookie.split(';')
-        const token = cookies.find(cookie => cookie.includes("token"))
-        if (token) {
+        const loggedIn = cookies.find(cookie => cookie.includes("loggedIn"))
+        if (loggedIn) {
             login.hidden = true
             register.hidden = true
         } else {
