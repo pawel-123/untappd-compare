@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const compareBeers = require('../compareBeers');
 
 // View all comparisons
-comparisonsRouter.get('/', async (request, response) => {
+comparisonsRouter.get('/', helper.authenticateToken, async (request, response) => {
     const comparisons = await Comparison.find({});
 
     const table = `<h1>There are ${comparisons.length} comparisons in the database</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th><th>See comparison</th></tr></thead><tbody>`;
