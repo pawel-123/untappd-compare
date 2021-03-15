@@ -17,14 +17,8 @@ comparisonsRouter.get('/', helper.authenticateToken, async (request, response) =
 });
 
 // Request a comparison, requires authorization, redirects to a comparison page
-comparisonsRouter.post('/', async (request, response) => {
+comparisonsRouter.post('/', helper.authenticateToken, async (request, response) => {
     const { user1, user2 } = request.body;
-    const token = helper.getTokenFrom(request);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-
-    if (!token || !decodedToken) {
-        response.status(401).json({ error: 'token missing or invalid' });
-    }
 
     const findComparison = (userA, userB) => Comparison.findOne({ untappdUsers: [userA, userB] });
 
@@ -51,21 +45,14 @@ comparisonsRouter.post('/', async (request, response) => {
 });
 
 // View a specific comparison, requires authorization
-comparisonsRouter.get('/:comp_id', async (request, response) => {
-    const token = helper.getTokenFrom(request);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-
-    if (!token || !decodedToken.id) {
-        response.status(401).json({ error: 'token missing or invalid' });
-    }
-
+comparisonsRouter.get('/:comp_id', helper.authenticateToken, async (request, response) => {
     const comparison = await Comparison.findById(request.params.comp_id);
 
     if (!comparison) {
         response.status(404).json({ error: 'comparison not found' });
     }
 
-    const userId = decodedToken.id;
+    const userId = request.user.id;
     const user = await User.findById(userId);
 
     const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p><ul>`;
@@ -80,17 +67,10 @@ comparisonsRouter.get('/:comp_id', async (request, response) => {
 });
 
 // Save a comparison as a user, requires authorization
-comparisonsRouter.post('/:comp_id', async (request, response) => {
+comparisonsRouter.post('/:comp_id', helper.authenticateToken, async (request, response) => {
     const comparison = await Comparison.findById(request.params.comp_id);
 
-    const token = helper.getTokenFrom(request);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-
-    if (!token || !decodedToken.id) {
-        response.status(401).json({ error: 'token missing or invalid' });
-    }
-
-    const userId = decodedToken.id;
+    const userId = request.user.id;
     const user = await User.findById(userId);
 
     if (!comparison.users.includes(user._id)) {
@@ -107,7 +87,7 @@ comparisonsRouter.post('/:comp_id', async (request, response) => {
 });
 
 // View comparisons saved by a user
-comparisonsRouter.get('/users/:user_id', async (request, response) => {
+comparisonsRouter.get('/users/:user_id', helper.authenticateToken, async (request, response) => {
     const user = await User.findById(request.params.user_id);
     const comparisons = await Comparison.find({ users: { $in: [user._id] } });
 

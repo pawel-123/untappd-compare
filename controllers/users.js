@@ -10,16 +10,8 @@ const options = {
 };
 
 // View all users, requires authorization
-usersRouter.get('/', async (request, response) => {
-    const token = helper.getTokenFrom(request);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-
-    if (!token || !decodedToken.id) {
-        response.status(401).json({ error: 'token missing or invalid' });
-    }
-
+usersRouter.get('/', helper.authenticateToken, async (request, response) => {
     const users = await User.find({});
-
     response.json(users);
 });
 

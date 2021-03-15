@@ -9,7 +9,7 @@ const getTokenFrom = request => {
 };
 
 const authenticateToken = (request, response, next) => {
-    const tokenCookie = request.cookies.token
+    const tokenCookie = request.cookies.token;
     const token = tokenCookie && tokenCookie.substring(7);
     if (!token) {
         return response.status(401).json({ error: 'token missing or invalid (via authenticateToken)' });
@@ -17,9 +17,10 @@ const authenticateToken = (request, response, next) => {
 
     jwt.verify(token, process.env.SECRET, (error, user) => {
         if (error) {
-            return response.status(403).json({ error: 'jwt not verified via authenticateToken' })
+            return response.status(403).json({ error: 'jwt not verified via authenticateToken' });
         }
-        next()
+        request.user = user;
+        next();
     })
 }
 
