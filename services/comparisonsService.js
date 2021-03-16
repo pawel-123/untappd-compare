@@ -1,5 +1,6 @@
 const Comparison = require('../models/comparison');
 const User = require('../models/user');
+const compareBeers = require('../compareBeers');
 
 const getComparisons = async () => {
     const comparisons = await Comparison.find({});

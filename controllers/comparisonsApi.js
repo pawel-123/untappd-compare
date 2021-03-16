@@ -1,9 +1,6 @@
 const comparisonsApiRouter = require('express').Router();
-const Comparison = require('../models/comparison');
-const User = require('../models/user');
 const comparisonsService = require('../services/comparisonsService');
 const helper = require('../utils/helper');
-const compareBeers = require('../compareBeers');
 
 // View all comparisons
 comparisonsApiRouter.get('/', helper.authenticateToken, async (request, response) => {
