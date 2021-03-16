@@ -5,7 +5,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
-const comparisonsRouter = require('./controllers/comparisons');
+const comparisonsApiRouter = require('./controllers/comparisonsApi');
+const comparisonsSsrRouter = require('./controllers/comparisonsSsr');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
 const middleware = require('./utils/middleware');
@@ -32,7 +33,9 @@ app.get('/', (request, response) => {
     response.sendFile('/index.html', options);
 });
 
-app.use('/api/comparisons', comparisonsRouter);
+app.use('/api/comparisons', comparisonsApiRouter);
+
+app.use('/comparisons', comparisonsSsrRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.get('/api/logout', (request, response) => {
