@@ -7,7 +7,8 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const comparisonsApiRouter = require('./controllers/comparisonsApi');
 const comparisonsSsrRouter = require('./controllers/comparisonsSsr');
-const usersRouter = require('./controllers/users');
+const usersApiRouter = require('./controllers/usersApi');
+const usersSsrRouter = require('./controllers/usersSsr');
 const loginRouter = require('./controllers/login');
 const middleware = require('./utils/middleware');
 
@@ -34,9 +35,11 @@ app.get('/', (request, response) => {
 });
 
 app.use('/api/comparisons', comparisonsApiRouter);
+app.use('/api/users', usersApiRouter);
 
 app.use('/comparisons', comparisonsSsrRouter);
-app.use('/api/users', usersRouter);
+app.use('/users', usersSsrRouter);
+
 app.use('/api/login', loginRouter);
 app.get('/api/logout', (request, response) => {
     response.status(200).clearCookie('token').clearCookie('loggedIn').redirect('../..');
