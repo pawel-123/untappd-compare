@@ -9,7 +9,6 @@ const comparisonsApiRouter = require('./controllers/comparisonsApi');
 const comparisonsSsrRouter = require('./controllers/comparisonsSsr');
 const usersApiRouter = require('./controllers/usersApi');
 const usersSsrRouter = require('./controllers/usersSsr');
-const loginRouter = require('./controllers/login');
 const middleware = require('./utils/middleware');
 
 const options = {
@@ -39,11 +38,6 @@ app.use('/api/users', usersApiRouter);
 
 app.use('/comparisons', comparisonsSsrRouter);
 app.use('/users', usersSsrRouter);
-
-app.use('/api/login', loginRouter);
-app.get('/api/logout', (request, response) => {
-    response.status(200).clearCookie('token').clearCookie('loggedIn').redirect('../..');
-});
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

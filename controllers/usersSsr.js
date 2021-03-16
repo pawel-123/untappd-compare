@@ -20,4 +20,25 @@ usersSsrRouter.post('/register', async (request, response) => {
     response.redirect('/api/login');
 });
 
+// Page with login form
+usersSsrRouter.get('/login', (request, response) => {
+    response.sendFile('/login.html', options);
+});
+
+// Login and obtain a token (stored in a cookie)
+usersSsrRouter.post('/login', async (request, response) => {
+    const body = request.body;
+    const token = await usersService.loginUser(body.username, body.password);
+
+    response
+        .status(200)
+        .cookie('token', `Bearer ${token}`, { httpOnly: true })
+        .cookie('loggedIn', 'true')
+        .redirect('../..');
+});
+
+usersSsrRouter.get('/logout', (request, response) => {
+    response.status(200).clearCookie('token').clearCookie('loggedIn').redirect('../..');
+});
+
 module.exports = usersSsrRouter;
