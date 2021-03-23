@@ -17,7 +17,7 @@ usersSsrRouter.post('/register', async (request, response) => {
     const body = request.body;
     const savedUser = await usersService.registerUser(body.username, body.password);
 
-    response.redirect('/api/login');
+    response.redirect('/users/login');
 });
 
 // Page with login form
