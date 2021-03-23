@@ -17,6 +17,13 @@ comparisonsApiRouter.post('/', helper.authenticateToken, async (request, respons
     response.json(requestedComparison);
 });
 
+// View comparisons saved by a user
+comparisonsApiRouter.get('/users/:user_id', helper.authenticateToken, async (request, response) => {
+    const comparisons = await comparisonsService.getUserComparisons(request.params.user_id);
+
+    response.json(comparisons);
+});
+
 // View a specific comparison, requires authorization
 comparisonsApiRouter.get('/:comp_id', helper.authenticateToken, async (request, response) => {
     const comparison = await comparisonsService.getComparison(request.params.comp_id)
@@ -29,13 +36,6 @@ comparisonsApiRouter.post('/:comp_id', helper.authenticateToken, async (request,
     const comparison = await comparisonsService.saveComparison(request.params.comp_id, request.user.id)
 
     response.json(comparison);
-});
-
-// View comparisons saved by a user
-comparisonsApiRouter.get('/users/:user_id', helper.authenticateToken, async (request, response) => {
-    const comparisons = await comparisonsService.getUserComparisons(request.params.user_id);
-
-    response.json(comparisons);
 });
 
 module.exports = comparisonsApiRouter;
