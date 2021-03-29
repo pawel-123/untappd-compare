@@ -63,4 +63,19 @@ const saveComparison = async (comp_id, user_id) => {
     return comparison;
 }
 
-module.exports = { getComparisons, getUserComparisons, getComparison, requestComparison, saveComparison };
+const userAverage = (comparison, userNumber) => {
+    const total = comparison.commonBeers.reduce((avg, beer) => {
+        if (userNumber === 1) {
+            return avg + beer.user1_rating;
+        }
+        if (userNumber === 2) {
+            return avg + beer.user2_rating;
+        }
+    }, 0);
+
+    const average = total / comparison.commonBeers.length;
+
+    return Math.round(average * 100) / 100;
+}
+
+module.exports = { getComparisons, getUserComparisons, getComparison, requestComparison, saveComparison, userAverage };

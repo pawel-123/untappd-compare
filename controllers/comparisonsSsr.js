@@ -52,14 +52,7 @@ comparisonsSsrRouter.get('/:comp_id', helper.authenticateToken, async (request, 
     const table = `<table><thead><tr><th>Beer Name</th><th>${comparison.untappdUsers[0]} Rating</th><th>${comparison.untappdUsers[1]} Rating</th></tr></thead><tbody>`;
     const beerRows = comparison.commonBeers.map(beer => `<tr><td>${beer.beer_name}</td><td>${beer.user1_rating}</td><td>${beer.user2_rating}</td></tr>`);
 
-    const user1Average = Math.round((comparison.commonBeers.reduce((avg, beer) => {
-        return avg + beer.user1_rating
-    }, 0) / comparison.commonBeers.length) * 100) / 100;
-    const user2Average = Math.round((comparison.commonBeers.reduce((avg, beer) => {
-        return avg + beer.user2_rating
-    }, 0) / comparison.commonBeers.length) * 100) / 100;
-
-    const averageRatings = `<tr><td><b>Average Rating</b></td><td><b>${user1Average}</b></td><td><b>${user2Average}</b></td></b></tr>`
+    const averageRatings = `<tr><td><b>Average Rating</b></td><td><b>${comparisonsService.userAverage(comparison, 1)}</b></td><td><b>${comparisonsService.userAverage(comparison, 2)}</b></td></b></tr>`
     const saveComparison = (comparison.users.includes(userId))
         ? '<p>You already saved this comparison</p>'
         : `<form method="post" action="/comparisons/${comparison._id}"><button name="save">Save comparison</button></form>`;
