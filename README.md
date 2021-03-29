@@ -28,9 +28,9 @@ Since this was a primarily backend focused project, there is no styling.
 - Setting up environment variables with dotenv
 - Backend API routes returning JSON
 - Server side rendered front-end with routes returning HTML files and HTML strings
-- Conditionally rendering HTML elements with JS (i.e. Register & Login vs Logout) in the navigation
+- Conditionally rendering HTML elements with JS (i.e. Register & Login vs Logout or "Save Comparison" vs "You already saved this comparison")
 - Automatically savings all new comparison requests to DB (after request, the route checks if such comparison already exists in DB - if yes, it fetches it from the DB and if not, it fetches it from Untappd API and saves to DB)
-- Making requests with VSCode REST Client and Postman
+- Submit requests with HTML forms, VSCode REST Client and Postman
 - Deploying to AWS EC2 instance (including DB)
 - Connecting the deployed app to a domain
 

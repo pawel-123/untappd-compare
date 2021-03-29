@@ -48,14 +48,24 @@ comparisonsSsrRouter.get('/:comp_id', helper.authenticateToken, async (request, 
     const userId = request.user.id;
 
     const nav = `<a href="/">Home</a>`;
-    const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p><ul>`;
-    const beers = comparison.commonBeers.map(beer => `<li>${beer.beer_name}</li>`);
+    const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p>`;
+    const table = `<table><thead><tr><th>Beer Name</th><th>${comparison.untappdUsers[0]} Rating</th><th>${comparison.untappdUsers[1]} Rating</th></tr></thead><tbody>`;
+    const beerRows = comparison.commonBeers.map(beer => `<tr><td>${beer.beer_name}</td><td>${beer.user1_rating}</td><td>${beer.user2_rating}</td></tr>`);
+
+    const user1Average = Math.round((comparison.commonBeers.reduce((avg, beer) => {
+        return avg + beer.user1_rating
+    }, 0) / comparison.commonBeers.length) * 100) / 100;
+    const user2Average = Math.round((comparison.commonBeers.reduce((avg, beer) => {
+        return avg + beer.user2_rating
+    }, 0) / comparison.commonBeers.length) * 100) / 100;
+
+    const averageRatings = `<tr><td><b>Average Rating</b></td><td><b>${user1Average}</b></td><td><b>${user2Average}</b></td></b></tr>`
     const saveComparison = (comparison.users.includes(userId))
         ? '<p>You already saved this comparison</p>'
         : `<form method="post" action="/comparisons/${comparison._id}"><button name="save">Save comparison</button></form>`;
     const myComparisons = `<a href="/comparisons/users/${userId}">My Comparisons</a>`;
 
-    const html = `${nav}${greeting}<ul>${beers.join('')}</ul>${saveComparison}${myComparisons}`;
+    const html = `${nav}${greeting}${table}${beerRows.join('')}${averageRatings}</tbody></table>${saveComparison}${myComparisons}`;
 
     response.send(html);
 });
