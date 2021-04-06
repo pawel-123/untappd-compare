@@ -17,8 +17,9 @@ const options = {
 };
 
 const corsOptions = {
-  origin: 'http://localhost:8080',
-  credentials: true
+  origin: ['http://localhost:8080', 'https://untappdcompare.com'],
+  credentials: true,
+  preflightContinue: true
 };
 
 const mongoUri = process.env.MONGO_URI;
@@ -33,15 +34,15 @@ mongoose.connect(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Home page with login/register/log out and a form to request a comparison
 app.get('/', (request, response) => {
   response.sendFile('/index.html', options);
 });
 
-app.use('/api/comparisons', cors(corsOptions), comparisonsApiRouter);
-app.use('/api/users', cors(corsOptions), usersApiRouter);
+app.use('/api/comparisons', comparisonsApiRouter);
+app.use('/api/users', usersApiRouter);
 
 app.use('/comparisons', comparisonsSsrRouter);
 app.use('/users', usersSsrRouter);

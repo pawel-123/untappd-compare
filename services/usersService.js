@@ -7,8 +7,8 @@ const getUsers = async () => {
   return users;
 };
 
-const registerUser = async (username, password) => {
-  if (password < 6) {
+const registerUser = async (username, password, response) => {
+  if (password.length < 6) {
     response.status(403).json({ error: 'password too short' });
   }
 
@@ -22,9 +22,9 @@ const registerUser = async (username, password) => {
   const savedUser = await user.save();
 
   return savedUser;
-}
+};
 
-const loginUser = async (username, password) => {
+const loginUser = async (username, password, response) => {
   const user = await User.findOne({ username: username });
 
   const passwordCorrect = user === null
@@ -42,9 +42,10 @@ const loginUser = async (username, password) => {
     id: user._id
   };
 
-  const token = jwt.sign(userForToken, process.env.SECRET, { expiresIn: "30m" });
+  const token = jwt.sign(userForToken, process.env.SECRET, { expiresIn: '24h' });
 
-  return token;
-}
+  // return token;
+  return { token: token, username: user.username, id: user._id };
+};
 
-module.exports = { getUsers, registerUser, loginUser }
+module.exports = { getUsers, registerUser, loginUser };

@@ -20,9 +20,10 @@ usersApiRouter.post('/register', async (request, response) => {
 // Login and obtain a token
 usersApiRouter.post('/login', async (request, response) => {
   const body = request.body;
-  const token = await usersService.loginUser(body.username, body.password);
+  const loginData = await usersService.loginUser(body.username, body.password);
 
-  response.json({ token: token });
+  // response.json({ token: loginData.token });
+  response.json(loginData);
 });
 
 module.exports = usersApiRouter;

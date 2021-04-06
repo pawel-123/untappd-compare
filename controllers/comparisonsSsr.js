@@ -44,7 +44,7 @@ comparisonsSsrRouter.get('/users/:user_id', helper.authenticateToken, async (req
 
 // View a specific comparison, requires authorization
 comparisonsSsrRouter.get('/:comp_id', helper.authenticateToken, async (request, response) => {
-  const comparison = await comparisonsService.getComparison(request.params.comp_id);
+  const comparison = await comparisonsService.getComparison(request.params.comp_id, response);
   const userId = request.user.id;
 
   const nav = '<a href="/">Home</a>';

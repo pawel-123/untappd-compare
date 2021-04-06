@@ -12,7 +12,7 @@ const getUserComparisons = async (user_id) => {
   return comparisons;
 };
 
-const getComparison = async (id) => {
+const getComparison = async (id, response) => {
   const comparison = await Comparison.findById(id);
 
   if (!comparison) {
