@@ -4,70 +4,70 @@ const helper = require('../utils/helper');
 
 // View all comparisons
 comparisonsSsrRouter.get('/', helper.authenticateToken, async (request, response) => {
-    const comparisons = await comparisonsService.getComparisons();
+  const comparisons = await comparisonsService.getComparisons();
 
-    const nav = `<a href="/">Home</a>`;
-    const table = `<h1>There are ${comparisons.length} comparisons in the database</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th><th>See comparison</th></tr></thead><tbody>`;
-    const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td><td><a href="/comparisons/${comp._id}">Click here</a></td></tr>`);
-    const html = `${nav}${table}${beerRows.join('')}</tbody></table>`;
+  const nav = '<a href="/">Home</a>';
+  const table = `<h1>There are ${comparisons.length} comparisons in the database</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th><th>See comparison</th></tr></thead><tbody>`;
+  const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td><td><a href="/comparisons/${comp._id}">Click here</a></td></tr>`);
+  const html = `${nav}${table}${beerRows.join('')}</tbody></table>`;
 
-    response.send(html);
+  response.send(html);
 });
 
 // Request a new comparison, requires authorization, redirects to a comparison page
 comparisonsSsrRouter.post('/', helper.authenticateToken, async (request, response) => {
-    const { user1, user2 } = request.body;
-    const requestedComparison = await comparisonsService.requestComparison(user1, user2);
+  const { user1, user2 } = request.body;
+  const requestedComparison = await comparisonsService.requestComparison(user1, user2);
 
-    response.redirect(`/comparisons/${requestedComparison._id}`);
+  response.redirect(`/comparisons/${requestedComparison._id}`);
 });
 
 // Redirect to user's saved comparisons route
 comparisonsSsrRouter.get('/users', helper.authenticateToken, async (request, response) => {
-    const userID = request.user.id
+  const userID = request.user.id;
 
-    response.redirect(`/comparisons/users/${userID}`)
-})
+  response.redirect(`/comparisons/users/${userID}`);
+});
 
 // View comparisons saved by a user
 comparisonsSsrRouter.get('/users/:user_id', helper.authenticateToken, async (request, response) => {
-    const comparisons = await comparisonsService.getUserComparisons(request.params.user_id);
-    const user = request.user;
+  const comparisons = await comparisonsService.getUserComparisons(request.params.user_id);
+  const user = request.user;
 
-    const nav = `<a href="/">Home</a>`;
-    const table = `<h1>There are ${comparisons.length} comparisons saved by ${user.username}</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th><th>See comparison</th></tr></thead><tbody>`;
-    const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td><td><a href="/comparisons/${comp._id}">Click here</a></td></tr>`);
-    const html = `${nav}${table}${beerRows.join('')}</tbody></table>`;
+  const nav = '<a href="/">Home</a>';
+  const table = `<h1>There are ${comparisons.length} comparisons saved by ${user.username}</h1><table><thead><tr><th>User 1</th><th>User 2</th><th>Common beers</th><th>See comparison</th></tr></thead><tbody>`;
+  const beerRows = comparisons.map(comp => `<tr><td>${comp.untappdUsers[0]}</td><td>${comp.untappdUsers[1]}</td><td>${comp.commonBeers.length}</td><td><a href="/comparisons/${comp._id}">Click here</a></td></tr>`);
+  const html = `${nav}${table}${beerRows.join('')}</tbody></table>`;
 
-    response.send(html);
+  response.send(html);
 });
 
 // View a specific comparison, requires authorization
 comparisonsSsrRouter.get('/:comp_id', helper.authenticateToken, async (request, response) => {
-    const comparison = await comparisonsService.getComparison(request.params.comp_id)
-    const userId = request.user.id;
+  const comparison = await comparisonsService.getComparison(request.params.comp_id);
+  const userId = request.user.id;
 
-    const nav = `<a href="/">Home</a>`;
-    const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p>`;
-    const table = `<table><thead><tr><th>Beer Name</th><th>${comparison.untappdUsers[0]} Rating</th><th>${comparison.untappdUsers[1]} Rating</th></tr></thead><tbody>`;
-    const beerRows = comparison.commonBeers.map(beer => `<tr><td>${beer.beer_name}</td><td>${beer.user1_rating}</td><td>${beer.user2_rating}</td></tr>`);
+  const nav = '<a href="/">Home</a>';
+  const greeting = `<p>${comparison.untappdUsers[0]} and ${comparison.untappdUsers[1]} have ${comparison.commonBeers.length} beers in common:</p>`;
+  const table = `<table><thead><tr><th>Beer Name</th><th>${comparison.untappdUsers[0]} Rating</th><th>${comparison.untappdUsers[1]} Rating</th></tr></thead><tbody>`;
+  const beerRows = comparison.commonBeers.map(beer => `<tr><td>${beer.beer_name}</td><td>${beer.user1_rating}</td><td>${beer.user2_rating}</td></tr>`);
 
-    const averageRatings = `<tr><td><b>Average Rating</b></td><td><b>${comparisonsService.userAverage(comparison, 1)}</b></td><td><b>${comparisonsService.userAverage(comparison, 2)}</b></td></b></tr>`
-    const saveComparison = (comparison.users.includes(userId))
-        ? '<p>You already saved this comparison</p>'
-        : `<form method="post" action="/comparisons/${comparison._id}"><button name="save">Save comparison</button></form>`;
-    const myComparisons = `<a href="/comparisons/users/${userId}">My Comparisons</a>`;
+  const averageRatings = `<tr><td><b>Average Rating</b></td><td><b>${comparisonsService.userAverage(comparison, 1)}</b></td><td><b>${comparisonsService.userAverage(comparison, 2)}</b></td></b></tr>`;
+  const saveComparison = (comparison.users.includes(userId))
+    ? '<p>You already saved this comparison</p>'
+    : `<form method="post" action="/comparisons/${comparison._id}"><button name="save">Save comparison</button></form>`;
+  const myComparisons = `<a href="/comparisons/users/${userId}">My Comparisons</a>`;
 
-    const html = `${nav}${greeting}${table}${beerRows.join('')}${averageRatings}</tbody></table>${saveComparison}${myComparisons}`;
+  const html = `${nav}${greeting}${table}${beerRows.join('')}${averageRatings}</tbody></table>${saveComparison}${myComparisons}`;
 
-    response.send(html);
+  response.send(html);
 });
 
 // Save a comparison as a user, requires authorization
 comparisonsSsrRouter.post('/:comp_id', helper.authenticateToken, async (request, response) => {
-    const comparison = await comparisonsService.saveComparison(request.params.comp_id, request.user.id)
+  const comparison = await comparisonsService.saveComparison(request.params.comp_id, request.user.id);
 
-    response.redirect(`/comparisons/${comparison._id}`);
+  response.redirect(`/comparisons/${comparison._id}`);
 });
 
 module.exports = comparisonsSsrRouter;
