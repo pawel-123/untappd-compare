@@ -22,9 +22,8 @@ usersApiRouter.post('/login', async (request, response) => {
   const body = request.body;
   const loginData = await usersService.loginUser(body.username, body.password);
 
-  // response.json({ token: loginData.token });
   response
-    .cookie('token', `Bearer ${loginData.token}`, { sameSite: 'None', secure: true })
+    .cookie('token', `Bearer ${loginData.token}`, { maxAge: 24 * 60 * 60 * 1000, sameSite: 'None', secure: true })
     .json(loginData);
 });
 
