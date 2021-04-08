@@ -23,7 +23,10 @@ usersApiRouter.post('/login', async (request, response) => {
   const loginData = await usersService.loginUser(body.username, body.password);
 
   // response.json({ token: loginData.token });
-  response.json(loginData);
+  response
+    // .cookie('token', `Bearer ${loginData.token}`, { domain: 'untappdcompare.com', secure: true, sameSite: 'None' })
+    .cookie('token', `Bearer ${loginData.token}`)
+    .json(loginData);
 });
 
 module.exports = usersApiRouter;
