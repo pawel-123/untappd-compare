@@ -28,6 +28,7 @@ usersSsrRouter.get('/login', (request, response) => {
 usersSsrRouter.post('/login', async (request, response) => {
   const body = request.body;
   const loginData = await usersService.loginUser(body.username, body.password, response);
+  console.log('usersSSr login route running');
 
   response
     .status(200)
