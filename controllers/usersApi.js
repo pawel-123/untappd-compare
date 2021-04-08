@@ -25,7 +25,7 @@ usersApiRouter.post('/login', async (request, response) => {
   // response.json({ token: loginData.token });
   response
     // .cookie('token', `Bearer ${loginData.token}`, { domain: 'untappdcompare.com', secure: true, sameSite: 'None' })
-    .cookie('token', `Bearer ${loginData.token}`)
+    .cookie('token', `Bearer ${loginData.token}`, { sameSite: 'None' })
     .json(loginData);
 });
 
