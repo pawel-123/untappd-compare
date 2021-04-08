@@ -9,7 +9,7 @@ const getUsers = async () => {
 
 const registerUser = async (username, password, response) => {
   if (password.length < 6) {
-    response.status(403).json({ error: 'password too short' });
+    return response.status(403).json({ error: 'password too short' });
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
